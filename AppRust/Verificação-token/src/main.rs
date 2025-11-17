@@ -1,7 +1,7 @@
-use actix_web::{web, App, HttpResponse, HttpServer, HttpRequest};
+use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
 use serde::{Deserialize, Serialize};
-use jsonwebtoken::{decode, DecodingKey, Validation};
-use chrono::Utc;
+use jsonwebtoken::{encode, decode, Header, EncodingKey, DecodingKey, Validation};
+use chrono::{Utc, Duration};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
@@ -10,6 +10,30 @@ struct Claims {
 }
 
 const SECRET_KEY: &str = "minha_chave_nao_segura_que_prometo_mudar_quando_der";
+
+
+async fn gerar_token(info: web::Query<std::collections::HashMap<String, String>>) -> HttpResponse {
+    let user_id = match info.get("userId") {
+        Some(id) if !id.is_empty() => id.clone(),
+        _ => return HttpResponse::BadRequest().body("Falta ou é inválido o parâmetro ?userId"),
+    };
+
+    let exp = Utc::now()
+        .checked_add_signed(Duration::hours(1))
+        .expect("valid timestamp")
+        .timestamp() as usize;
+
+    let claims = Claims {
+        sub: user_id,
+        exp,
+    };
+
+    match encode(&Header::default(), &claims, &EncodingKey::from_secret(SECRET_KEY.as_ref())) {
+        Ok(token) => HttpResponse::Ok().body(token),
+        Err(_) => HttpResponse::InternalServerError().body("Erro ao gerar token"),
+    }
+}
+
 
 async fn verificar_token(req: HttpRequest) -> HttpResponse {
     let token_header = match req.headers().get("Authorization") {
@@ -40,13 +64,15 @@ async fn verificar_token(req: HttpRequest) -> HttpResponse {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    println!("🚀 Servidor de verificação em http://localhost:5050");
+    println!("🚀 Servidor rodando em http://127.0.0.1:8081 (Gerar Token)");
+    println!("🚀 Servidor de verificação em http://127.0.0.1:5050 (Verificar Token)");
 
     HttpServer::new(|| {
         App::new()
-            .route("/verificar-token", web::get().to(verificar_token))
+            .route("/gerar-token", web::get().to(gerar_token))  
+            .route("/verificar-token", web::get().to(verificar_token))  
     })
-    .bind(("127.0.0.1", 5050))?
+    .bind(("127.0.0.1", 8081))?  
     .run()
     .await
 }
