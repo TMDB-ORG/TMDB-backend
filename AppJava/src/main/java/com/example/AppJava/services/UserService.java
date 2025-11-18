@@ -12,8 +12,6 @@ public class UserService {
     @Autowired
     private UserRepositories userRepositories;
 
-
-
     public String createUser(UserEntity user) {
         if(user.getUsername() == null) {
             throw new IllegalArgumentException("Nome obrigatorio");

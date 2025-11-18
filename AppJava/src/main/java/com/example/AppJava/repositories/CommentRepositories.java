@@ -8,4 +8,6 @@ import com.example.AppJava.entities.CommentEntity;
 @Repository
 public interface  CommentRepositories extends JpaRepository<CommentEntity, Long> {
     List<CommentEntity> findByUserId(Long userId);
+    List<CommentEntity> findByMovieId(Long movieId);
+    
 }

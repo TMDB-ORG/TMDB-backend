@@ -17,8 +17,8 @@ import com.example.AppJava.services.CommentService;
 
 @CrossOrigin(origins = "*")
 public class CommentControllers {
+    
     @Autowired
-    private CommentEntity commentEntity;
     private CommentService commentService;
     public ResponseEntity<Map<String,Object>> getComments(@RequestBody CommentEntity comment){
         try {
