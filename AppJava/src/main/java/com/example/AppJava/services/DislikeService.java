@@ -1,9 +1,11 @@
 package com.example.AppJava.services;
-import com.example.AppJava.entities.DislikeEntity;
-import com.example.AppJava.repositories.DislikeRepositories;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.example.AppJava.entities.DislikeEntity;
+import com.example.AppJava.repositories.DislikeRepositories;
 
 @Service
 public class DislikeService {
@@ -31,9 +33,18 @@ public class DislikeService {
             throw new RuntimeException("Erro ao salvar unlike");
         }
     }
-    public List<DislikeEntity> findByUserId(Long userId) {
-        return dislikeRepository.findByUserId(userId);
+    public DislikeEntity findById(Long id) {
+        return dislikeRepository.findById(id).orElse(null);
     }
+    public String removeDislike(Long userId, Long movieId) {
+        try {
+            dislikeRepository.deleteByUserIdAndMovieId(userId, movieId);
+            return "Dislike removido com sucesso";
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao remover dislike");
+        }
+    }
+
 
     public List<DislikeEntity> findByMovieId(Long movieId) {
         return dislikeRepository.findByMovieId(movieId);
@@ -41,5 +52,11 @@ public class DislikeService {
 
     public void deleteByUserIdAndMovieId(Long userId, Long movieId) {
         dislikeRepository.deleteByUserIdAndMovieId(userId, movieId);
+    }
+    public void deleteById(Long id) {
+        dislikeRepository.deleteById(id);
+    }
+    public Number countDislikesByMovieId(Long movieId) {
+        return dislikeRepository.countByMovieId(movieId);
     }
 }

@@ -13,7 +13,7 @@ public class MovieEntity {
     @Id
     private Long  Id;
 
-    @Column(name = "Title", nullable = false)
+    @Column(name = "Title", nullable = true)
     private String title;
 
 

@@ -64,15 +64,14 @@ async fn verificar_token(req: HttpRequest) -> HttpResponse {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    println!("🚀 Servidor rodando em http://127.0.0.1:8081 (Gerar Token)");
-    println!("🚀 Servidor de verificação em http://127.0.0.1:5050 (Verificar Token)");
+      println!("🚀 Servidor rodando em http://127.0.0.1:8081");
 
     HttpServer::new(|| {
         App::new()
-            .route("/gerar-token", web::get().to(gerar_token))  
-            .route("/verificar-token", web::get().to(verificar_token))  
+            .route("/gerar-token", web::get().to(gerar_token))
+            .route("/verificar-token", web::get().to(verificar_token))
     })
-    .bind(("127.0.0.1", 8081))?  
+    .bind(("127.0.0.1", 8081))? 
     .run()
     .await
 }
