@@ -15,4 +15,5 @@ public interface DislikeRepositories extends JpaRepository<DislikeEntity, Long> 
     List<DislikeEntity> findByMovieId(Long movieId);
     Number countByMovieId(Long movieId);
     void deleteByUserIdAndMovieId(Long userId, Long movieId);
+    
 }

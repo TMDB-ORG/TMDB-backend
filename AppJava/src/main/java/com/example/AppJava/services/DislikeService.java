@@ -5,12 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.AppJava.entities.DislikeEntity;
+import com.example.AppJava.entities.MovieEntity;
+import com.example.AppJava.entities.UserEntity;
 import com.example.AppJava.repositories.DislikeRepositories;
 
 @Service
 public class DislikeService {
     @Autowired
     private DislikeRepositories dislikeRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
 
     public String findByUserIdAndMovieId(Long userId, Long movieId) {
         if (dislikeRepository.findByUserIdAndMovieId(userId, movieId) != null) {
@@ -45,6 +50,28 @@ public class DislikeService {
         }
     }
 
+    public String toggleDislike(Long userId, Long movieId) {
+
+
+    DislikeEntity existing = dislikeRepository.findByUserIdAndMovieId(userId, movieId);
+
+    if (existing != null) {
+     
+        dislikeRepository.delete(existing);
+        return "Dislike removido";
+    }
+
+   
+    DislikeEntity d = new DislikeEntity();
+    UserEntity user = userService.getUserById(userId);
+    MovieEntity movie = new MovieEntity();
+    movie.setId(movieId);
+    d.setUser(user);
+    d.setMovie(movie);
+
+    dislikeRepository.save(d);
+    return "Dislike adicionado";
+}
 
     public List<DislikeEntity> findByMovieId(Long movieId) {
         return dislikeRepository.findByMovieId(movieId);
