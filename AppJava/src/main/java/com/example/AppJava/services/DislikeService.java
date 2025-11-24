@@ -15,8 +15,7 @@ public class DislikeService {
     private DislikeRepositories dislikeRepository;
     @Autowired
     private UserService userService;
-    @Autowired
-
+    
     public String findByUserIdAndMovieId(Long userId, Long movieId) {
         if (dislikeRepository.findByUserIdAndMovieId(userId, movieId) != null) {
             return "Unliked";
