@@ -45,13 +45,13 @@ public class UserService {
         if(user == null) {
             throw new IllegalArgumentException("Usuario nao encontrado");
         }
-       
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     if (!encoder.matches(password, user.getPassword())) { 
         throw new IllegalArgumentException("Senha inválida");
     }
         String token = JwtUtil.generateToken(user.getId());
+        System.out.println("Token gerado no login: " + token);
         return token;
     }
     public UserEntity getUserById(Long id) {

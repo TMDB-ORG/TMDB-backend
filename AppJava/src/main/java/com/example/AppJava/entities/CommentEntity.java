@@ -1,4 +1,8 @@
 package com.example.AppJava.entities;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,11 +11,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-import com.example.AppJava.entities.UserEntity;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.example.AppJava.entities.MovieEntity;
 
 @Data
 @Entity
@@ -33,4 +32,8 @@ public class CommentEntity {
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
     private MovieEntity movie;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

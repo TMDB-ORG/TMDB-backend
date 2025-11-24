@@ -1,20 +1,19 @@
 package com.example.AppJava.controllers;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.Map;
 
-import com.example.AppJava.entities.UserEntity;
-import com.example.AppJava.services.UserService;
-
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;    
+import com.example.AppJava.entities.UserEntity;
+import com.example.AppJava.services.UserService;    
 @RestController
 
 @RequestMapping("/users")
@@ -42,7 +41,18 @@ public class UserControllers {
         String password = credentials.getPassword();
         try {
             String token = userService.loginUser(email, password);
-            return ResponseEntity.ok(Map.of("token", token));
+            System.out.println("Generated Token: " + token);
+    ResponseCookie cookie = ResponseCookie.from("token", token)
+        .httpOnly(false)      
+        .secure(false)       
+        .path("/")          
+        .maxAge(3600)        
+        .sameSite("Lax")   
+        .build();
+
+return ResponseEntity.ok()
+        .header("Set-Cookie", cookie.toString())
+        .body(Map.of("message", "Login realizado com sucesso!"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
