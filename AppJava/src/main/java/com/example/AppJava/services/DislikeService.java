@@ -8,6 +8,8 @@ import com.example.AppJava.entities.DislikeEntity;
 import com.example.AppJava.entities.MovieEntity;
 import com.example.AppJava.entities.UserEntity;
 import com.example.AppJava.repositories.DislikeRepositories;
+import com.example.AppJava.repositories.MovieRepositories;
+import com.example.AppJava.repositories.UserRepositories;
 
 @Service
 public class DislikeService {
@@ -15,23 +17,29 @@ public class DislikeService {
     private DislikeRepositories dislikeRepository;
     @Autowired
     private UserService userService;
-    
-    public String findByUserIdAndMovieId(Long userId, Long movieId) {
-        if (dislikeRepository.findByUserIdAndMovieId(userId, movieId) != null) {
-            return "Unliked";
-        } else {
-            return "Not Unliked";
-        }
+    @Autowired
+    private MovieRepositories  movieRepositories;
+    @Autowired
+    private UserRepositories userRepositories;
+ 
+
+
+ public String findByUserIdAndMovieId(Long userId, Long movieId) {
+            if (dislikeRepository.findByUser_IdAndMovie_Id(userId, movieId) != null) {
+                return "DISLIKED";
+            } else {
+                return "NONE";
+            }
 
     }
-    public String saveUnlike(DislikeEntity unlike) {
-        if(unlike.getUser() == null ) {
+    public String saveUnlike(DislikeEntity dislike) {
+        if(dislike.getUser() == null ) {
             throw new IllegalArgumentException("user não esta logado");
         }
-        if(unlike.getMovie() == null ) {
+        if(dislike.getMovie() == null ) {
             throw new IllegalArgumentException("movie é obrigatorio");
         }
-        if (dislikeRepository.save(unlike) != null) {
+        if (dislikeRepository.save(dislike) != null) {
             return "Unlike salvo com sucesso";
         } else {
             throw new RuntimeException("Erro ao salvar unlike");
@@ -42,7 +50,7 @@ public class DislikeService {
     }
     public String removeDislike(Long userId, Long movieId) {
         try {
-            dislikeRepository.deleteByUserIdAndMovieId(userId, movieId);
+            dislikeRepository.deleteByUser_IdAndMovie_Id(userId, movieId);
             return "Dislike removido com sucesso";
         } catch (Exception e) {
             throw new RuntimeException("Erro ao remover dislike");
@@ -51,37 +59,33 @@ public class DislikeService {
 
     public String toggleDislike(Long userId, Long movieId) {
 
+    UserEntity user = userRepositories.findById(userId).orElse(null);
+    MovieEntity movie = movieRepositories.findById(movieId).orElse(null);
 
-    DislikeEntity existing = dislikeRepository.findByUserIdAndMovieId(userId, movieId);
-
-    if (existing != null) {
-     
-        dislikeRepository.delete(existing);
-        return "Dislike removido";
+    if (user == null || movie == null) {
+        return "NONE";
     }
 
-   
+    DislikeEntity existing = dislikeRepository.findByUser_IdAndMovie_Id(userId, movieId);
+
+    if (existing != null) {
+        dislikeRepository.delete(existing);
+        return "NONE"; 
+    }
+
     DislikeEntity d = new DislikeEntity();
-    UserEntity user = userService.getUserById(userId);
-    MovieEntity movie = new MovieEntity();
-    movie.setId(movieId);
     d.setUser(user);
     d.setMovie(movie);
 
     dislikeRepository.save(d);
-    return "Dislike adicionado";
+    return "DISLIKED"; 
 }
+
 
     public List<DislikeEntity> findByMovieId(Long movieId) {
         return dislikeRepository.findByMovieId(movieId);
     }
 
-    public void deleteByUserIdAndMovieId(Long userId, Long movieId) {
-        dislikeRepository.deleteByUserIdAndMovieId(userId, movieId);
-    }
-    public void deleteById(Long id) {
-        dislikeRepository.deleteById(id);
-    }
     public Number countDislikesByMovieId(Long movieId) {
         return dislikeRepository.countByMovieId(movieId);
     }

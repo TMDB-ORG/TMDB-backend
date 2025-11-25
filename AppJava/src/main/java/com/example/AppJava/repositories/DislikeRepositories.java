@@ -10,10 +10,9 @@ import com.example.AppJava.entities.DislikeEntity;
 
 @Repository
 public interface DislikeRepositories extends JpaRepository<DislikeEntity, Long> {
-    DislikeEntity findByUserIdAndMovieId(Long userId, Long movieId);
     List<DislikeEntity> findByUserId(Long userId);
     List<DislikeEntity> findByMovieId(Long movieId);
     Number countByMovieId(Long movieId);
-    void deleteByUserIdAndMovieId(Long userId, Long movieId);
-    
+    DislikeEntity findByUser_IdAndMovie_Id(Long userId, Long movieId);
+    void deleteByUser_IdAndMovie_Id(Long userId, Long movieId);
 }
