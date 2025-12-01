@@ -1,5 +1,6 @@
 package com.example.AppJava.services;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,6 @@ import com.example.AppJava.entities.UserEntity;
 import com.example.AppJava.repositories.DislikeRepositories;
 import com.example.AppJava.repositories.MovieRepositories;
 import com.example.AppJava.repositories.UserRepositories;
-
 @Service
 public class DislikeService {
     @Autowired
@@ -31,6 +31,15 @@ public class DislikeService {
                 return "NONE";
             }
 
+    }
+     public List<Map<String, Object>> getTop3MostDislikedMovies() {
+
+        List<Object[]> results = dislikeRepository.findTop3MoviesWithMostDislikes();
+
+        return results.stream().map(row -> Map.of(
+                "movieId", row[0],
+                "count", row[1]
+        )).toList();
     }
     public String saveUnlike(DislikeEntity dislike) {
         if(dislike.getUser() == null ) {
@@ -56,7 +65,7 @@ public class DislikeService {
             throw new RuntimeException("Erro ao remover dislike");
         }
     }
-
+    
     public String toggleDislike(Long userId, Long movieId) {
 
     UserEntity user = userRepositories.findById(userId).orElse(null);

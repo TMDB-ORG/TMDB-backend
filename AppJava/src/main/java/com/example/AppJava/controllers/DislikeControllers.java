@@ -1,6 +1,7 @@
 package com.example.AppJava.controllers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public ResponseEntity<Map<String,Object>> toggleDislike(
 
         return ResponseEntity.ok(
                 Map.of(
-                        "newStatus", newStatus,  // 🔥 antes era "message"
+                        "newStatus", newStatus,  
                         "count", count
                 )
         );
@@ -75,7 +76,16 @@ public ResponseEntity<Map<String,Object>> toggleDislike(
             return ResponseEntity.status(500).body(Map.of("error", "Internal Server Error"));
         }
     }
-
+    @GetMapping("/top3")
+public ResponseEntity<List<Map<String, Object>>> getTop3MostDislikedMovies() {
+    try {
+        List<Map<String, Object>> top3 = dislikeService.getTop3MostDislikedMovies();
+        return ResponseEntity.ok(top3);
+    } catch (Exception e) {
+        return ResponseEntity.status(500)
+                .body(null);
+    }
+}
     @GetMapping("/count")
 public ResponseEntity<Map<String, Object>> getDislikeCount(@RequestParam Long movieId) {
     try {
