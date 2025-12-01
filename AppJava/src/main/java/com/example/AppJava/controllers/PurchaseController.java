@@ -23,9 +23,6 @@ public class PurchaseController {
         Long userId = Long.valueOf(payload.get("userId").toString());
 
         String transactionId = "TXN" + System.currentTimeMillis();
-        
-        // Lógica para processar a compra (salvar no banco de dados, etc.)
-        // Aqui você pode chamar um serviço para lidar com a lógica de compra
 
     
 

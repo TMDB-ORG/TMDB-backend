@@ -6,6 +6,5 @@ import com.example.AppJava.entities.MovieEntity;
 
 @Repository
 public interface MovieRepositories extends JpaRepository<MovieEntity, Long> {
-    MovieEntity findByTitle(String title);
     MovieEntity findById(long id);
 }
